@@ -48,7 +48,7 @@
                             <div class='row'>
                                 <div class='col-3'>
                                     <div class='alert alert-secondary border border-dark alert-dismissible fade show' role='alert'>
-                                        <input type='hidden' name='list_tag[]' value="tag">
+                                        <input type='hidden' name='list_tag[]' value="{{ $tag }}">
                                         {{ $tag }}
                                         <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
                                         <span aria-hidden='true'>&times;</span>
@@ -162,7 +162,6 @@
             filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
             filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
             filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token=',
-            extraPlugins: 'powrmultislider',
             height: '800px'
         };
         var options2 = {
@@ -170,17 +169,12 @@
             filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
             filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
             filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token=',
-            extraPlugins: 'powrmultislider',
             height: '800px'
         };
     </script>
     <script>
         CKEDITOR.replace('summernote', options);
-        CKEDITOR.plugins.addExternal('powrmultislider', "https://cdn.jsdelivr.net/gh/superpowr/powr_for_ckeditor4/powrmultislider/", 'plugin.js');
-    </script>
-    <script>
         CKEDITOR.replace('summernote2', options2);
-        CKEDITOR.plugins.addExternal('powrmultislider', "https://cdn.jsdelivr.net/gh/superpowr/powr_for_ckeditor4/powrmultislider/", 'plugin.js');
     </script>
     <script type="text/javascript">
         $("#simpan_tag").click(function( event ) {

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Content;
 use App\Category;
 use App\Contact;
+use FarhanWazir\GoogleMaps\GMaps;
 
 class HomeController extends Controller
 {
@@ -14,9 +15,10 @@ class HomeController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(GMaps $gmaps)
     {
         //$this->middleware('auth');
+        $this->gmaps = $gmaps;
     }
 
     /**
@@ -60,5 +62,18 @@ class HomeController extends Controller
         $contact->save();
 
         return redirect()->back()->with(['success' => 'Terimakasih telah mengirimkan pesan']);
+    }
+
+    public function maps(){
+        $config = array();
+        $config['center'] = '6.9271, 79.8612';
+        $config['zoom'] = 13; 
+        $config['map_height'] = '300px';
+        $config['map_width'] = '500px'; 
+        $config['scrollwheel'] = false;
+        $this->gmaps->initialize($config);
+        $map = $this->gmaps->create_map();
+
+        return view('pages.maps', compact('map'));
     }
 }

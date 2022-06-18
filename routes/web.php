@@ -54,6 +54,8 @@ Route::group(['prefix' => '{locale?}', 'middleware' => ['bypass', 'language']], 
     Route::get('/news/{title?}', 'ContentDetailController@beritaDetail');
     Route::get('/contact', 'HomeController@contact');
     Route::post('/contact', 'HomeController@sendMessage');
+
+    Route::get('/maps', 'HomeController@maps');
 });
 
 Route::get('/lang/{locale?}', 'LanguageController@index');
