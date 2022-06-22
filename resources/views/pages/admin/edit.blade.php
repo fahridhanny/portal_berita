@@ -150,10 +150,28 @@
                     <p class="text-danger">{{ $message }}</p>
                 @enderror
             </div>
+            {{-- <div class="form-group">
+                <div class="input-group">
+                    <span class="input-group-btn">
+                      <a id="imageLFM" data-input="thumbnail" data-preview="holder" class="btn btn-primary">
+                        <i class="fa-solid fa-image"></i> Choose
+                      </a>
+                    </span>
+                    <input id="thumbnail" class="form-control" type="text" name="filepath">
+                </div>
+                <img id="holder" style="margin-top:15px;max-height:100px;">
+            </div> --}}
             <button type="submit" class="btn btn-primary">Simpan</button>
         </form>
     </div>
   </div>
+    
+    {{-- <script src="{{ asset('vendor/laravel-filemanager/js/lfm.js') }}"></script>
+
+    <script type="text/javascript">
+        var route_prefix = "/laravel-filemanager";
+        $('#imageLFM').filemanager('image', {prefix: route_prefix});
+    </script> --}}
 
     <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
     <script>
