@@ -179,15 +179,13 @@
             filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
             filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
             filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
-            filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token=',
-            height: '800px'
+            filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token='
         };
         var options2 = {
             filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
             filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
             filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
-            filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token=',
-            height: '800px'
+            filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token='
         };
     </script>
     <script>

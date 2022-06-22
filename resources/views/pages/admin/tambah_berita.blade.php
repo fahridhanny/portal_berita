@@ -147,8 +147,6 @@
     </script>
     <script>
         CKEDITOR.replace('summernote', options);
-    </script>
-    <script>
         CKEDITOR.replace('summernote2', options2);
     </script>
     <script type="text/javascript">
