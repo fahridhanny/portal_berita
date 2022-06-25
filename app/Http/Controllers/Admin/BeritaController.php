@@ -74,6 +74,7 @@ class BeritaController extends Controller
         $request->image->move(public_path('images'), $nameImage);
                 
         $content->image = $nameImage;
+        $content->status = 1;
         $content->save();
 
         $idMeta = Content::where('judul', $request->judul)->first();
@@ -273,5 +274,34 @@ class BeritaController extends Controller
         }else{
             return redirect('/admin/home');
         }
+    }
+
+    public function publishBerita(Request $request){
+        $content = Content::where("id", $request->id)->first();
+        if($content){
+            $content->status = $request->status;
+            $content->save();
+
+            return response()->json([
+                'status' => '200',
+                'message' => 'Success update status'
+            ]);
+        }else{
+            return response()->json([
+                'status' => '404',
+                'message' => 'Invalid content'
+            ]);
+        }
+    }
+
+    public function priview($title = ''){
+        if ($title == '') {
+            return redirect('/admin/content');
+        }
+        $content = Content::where('title', $title)->first();
+        if ($content == '') {
+            return redirect('/admin/content');
+        }
+        return view('pages.admin.priview', compact('content'));
     }
 }

@@ -26,6 +26,7 @@ class CreateContentsTable extends Migration
             $table->string('image');
             $table->string('view');
             $table->string('tag');
+            $table->integer('status');
             $table->timestamps();
  
             $table->foreign('id_author')->references('id')->on('users');

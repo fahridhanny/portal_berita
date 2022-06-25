@@ -20,12 +20,12 @@ class ContentDetailController extends Controller
         //dd($_language);
         if($title != ''){
 
-            $content = Content::where('title', $title)->first();
+            $content = Content::where('title', $title)->where('status', 2)->first();
             if($content){
                 $slug_id = $content->title;
                 $slug_en = $content->title_en;
             }else{
-                $content = Content::where('title_en', $title)->first();
+                $content = Content::where('title_en', $title)->where('status', 2)->first();
                 if($content){
                     $slug_id = $content->title;
                     $slug_en = $content->title_en;

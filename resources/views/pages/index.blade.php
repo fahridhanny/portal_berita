@@ -39,10 +39,10 @@
             </div>
             <div class="col-md-6 tn-right">
                 @php
-                    $contents_sport = App\Content::where('id_category', 1)->orderby('id', 'DESC')->first();
-                    $contents_tech = App\Content::where('id_category', 2)->orderby('id', 'DESC')->first();
-                    $contents_bisnis = App\Content::where('id_category', 3)->orderby('id', 'DESC')->first();
-                    $contents_hiburan = App\Content::where('id_category', 4)->orderby('id', 'DESC')->first();
+                    $contents_sport = App\Content::where('id_category', 1)->where('status', 2)->orderby('id', 'DESC')->first();
+                    $contents_tech = App\Content::where('id_category', 2)->where('status', 2)->orderby('id', 'DESC')->first();
+                    $contents_bisnis = App\Content::where('id_category', 3)->where('status', 2)->orderby('id', 'DESC')->first();
+                    $contents_hiburan = App\Content::where('id_category', 4)->where('status', 2)->orderby('id', 'DESC')->first();
                 @endphp
                 <div class="row">
                     <div class="col-md-6">
@@ -122,7 +122,7 @@
         <div class="row">
             <div class="col-md-6">
                 @php
-                    $contents = App\Content::where('id_category', 1)->paginate(2);
+                    $contents = App\Content::where('id_category', 1)->where('status', 2)->paginate(2);
                     $category = App\Category::where('id', 1)->first();
                 @endphp
                 <h2>@if(app()->getLocale() == 'id') {{ $category->category }} @else {{ $category->category_en }} @endif</h2>
@@ -149,7 +149,7 @@
             </div>
             <div class="col-md-6">
                 @php
-                    $contents = App\Content::where('id_category', 2)->paginate(2);
+                    $contents = App\Content::where('id_category', 2)->where('status', 2)->paginate(2);
                     $category = App\Category::where('id', 2)->first();
                 @endphp
                 <h2>@if(app()->getLocale() == 'id') {{ $category->category }} @else {{ $category->category_en }} @endif</h2>
@@ -185,7 +185,7 @@
         <div class="row">
             <div class="col-md-6">
                 @php
-                    $contents = App\Content::where('id_category', 3)->paginate(2);
+                    $contents = App\Content::where('id_category', 3)->where('status', 2)->paginate(2);
                     $category = App\Category::where('id', 3)->first();
                 @endphp
                 <h2>@if(app()->getLocale() == 'id') {{ $category->category }} @else {{ $category->category_en }} @endif</h2>
@@ -212,7 +212,7 @@
             </div>
             <div class="col-md-6">
                 @php
-                    $contents = App\Content::where('id_category', 4)->paginate(2);
+                    $contents = App\Content::where('id_category', 4)->where('status', 2)->paginate(2);
                     $category = App\Category::where('id', 4)->first();
                 @endphp
                 <h2>@if(app()->getLocale() == 'id') {{ $category->category }} @else {{ $category->category_en }} @endif</h2>
@@ -259,7 +259,7 @@
                 <div class="tab-content">
                     <div id="popular" class="container tab-pane active">
                         @php
-                            $contents = App\Content::orderby('view', 'DESC')->limit(3)->get();
+                            $contents = App\Content::where('status', 2)->orderby('view', 'DESC')->limit(3)->get();
                         @endphp
                         @foreach ($contents as $content)
                         <div class="tn-news">
@@ -282,7 +282,7 @@
                     </div>
                     <div id="latest" class="container tab-pane fade">
                         @php
-                            $contents = App\Content::orderby('id', 'DESC')->limit(3)->get();
+                            $contents = App\Content::where('status', 2)->orderby('id', 'DESC')->limit(3)->get();
                         @endphp
                         @foreach ($contents as $content)
                         <div class="tn-news">
@@ -319,7 +319,7 @@
                 <div class="tab-content">
                     <div id="m-read" class="container tab-pane active">
                         @php
-                            $contents = App\Content::orderby('view', 'DESC')->limit(3)->get();
+                            $contents = App\Content::where('status', 2)->orderby('view', 'DESC')->limit(3)->get();
                         @endphp
                         @foreach ($contents as $content)
                         <div class="tn-news">
@@ -342,7 +342,7 @@
                     </div>
                     <div id="m-recent" class="container tab-pane fade">
                         @php
-                            $contents = App\Content::orderby('id', 'DESC')->limit(3)->get();
+                            $contents = App\Content::where('status', 2)->orderby('id', 'DESC')->limit(3)->get();
                         @endphp
                         @foreach ($contents as $content)
                         <div class="tn-news">
@@ -375,7 +375,7 @@
     <div class="container">
         <div class="row">
             @php
-                $contents = App\Content::orderby('id', 'DESC')->limit(6)->get();
+                $contents = App\Content::where('status', 2)->orderby('id', 'DESC')->limit(6)->get();
             @endphp
             <div class="col-lg-9">
                 <div class="row">
@@ -402,7 +402,7 @@
 
             <div class="col-lg-3">
                 @php
-                    $contents = App\Content::orderby('id', 'DESC')->offset(6)->limit(6)->get();
+                    $contents = App\Content::where('status', 2)->orderby('id', 'DESC')->offset(6)->limit(6)->get();
                 @endphp
                 <div class="mn-list">
                     <h2>Read More</h2>
