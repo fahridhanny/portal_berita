@@ -16,8 +16,8 @@
             <thead class="table-dark">
             <tr>
                 <th>No. </th>
-                <th>Name_Id</th>
-                <th>Name_En</th>
+                <th>Name</th>
+                <th>Description</th>
                 <th>Edit</th>
                 <th>Hapus</th>
             </tr>
@@ -29,8 +29,8 @@
             @foreach ($tag as $data)
                 <tr>
                     <th>{{ $no++ }}</th>
-                    <td>{{ $data->name_id }}</td>
-                    <td>{{ $data->name_en }}</td>
+                    <td>{{ $data->name }}</td>
+                    <td>{{ $data->description }}</td>
                     <td><a href="/admin/edit-tag/{{ $data->id }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a></td>
                     <td><a href="/admin/hapus-tag/{{ $data->id }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a></td>
                 </tr>

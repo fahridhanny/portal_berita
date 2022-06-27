@@ -18,12 +18,26 @@ class TagController extends Controller
     }
 
     public function tambahTag(Request $request){
-        $tag = new Tag();
-        $tag->name_id = $request->name_id;
-        $tag->name_en = $request->name_en;
-        $tag->save();
+        
+        $request->validate([
+            'name' => 'required',
+            'description' => 'required'
+        ], [
+            'name.required' => 'name tidak boleh kosong',
+            'description.required' => 'description tidak boleh kosong',
+        ]);
 
-        return redirect()->back()->with(['success' => 'berhasil menambah data']);
+        try {
+            $tag = new Tag();
+            $tag->name = $request->name;
+            $tag->description = $request->description;
+            $tag->save();
+
+            return redirect("/admin/tag")->with(['success' => 'berhasil menambah data']);
+        } catch (\Throwable $th) {
+            return redirect("/admin/tag")->with(['error' => 'gagal menambah data']);
+        }
+        
     }
 
     public function formEditTag($id = ''){
@@ -41,11 +55,11 @@ class TagController extends Controller
 
     public function editTag($id, Request $request){
         $request->validate([
-            'name_id' => 'required',
-            'name_en' => 'required',
+            'name' => 'required',
+            'description' => 'required',
         ],[
-            'name_id.required' => 'name_id tidak boleh kosong',
-            'name_en.required' => 'name_en tidak boleh kosong',
+            'name.required' => 'name tidak boleh kosong',
+            'description.required' => 'description tidak boleh kosong',
         ]);
 
         if($id){

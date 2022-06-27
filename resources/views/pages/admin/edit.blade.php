@@ -17,10 +17,10 @@
         <form action="/admin/edit-berita/{{ $content->title }}" method="post" class="form" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="title" value="{{ $content->title }}">
-            <div class="form-group">
+            <div class="form-group" style="margin-right: 70%">
                 <label for="exampleFormControlFile1">Category</label>
                 <br>
-                <select class="form-select" aria-label="Default select example" id="category" name="category">
+                <select class="form-control" aria-label="Default select example" id="category" name="category">
                     @foreach ($category as $data)
                         <option @if($data->id == $content->id_category) selected @endif value="{{ $data->id }}">{{ $data->category }}</option>
                     @endforeach
@@ -29,7 +29,30 @@
                     <p class="text-danger">{{ $errors->first('category') }}</p>
                 @endif  
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin-right: 50%">
+                <label for="browser" class="form-label">Tag</label>
+                <input type='text'
+                    value="{{ $content->tag ? $content->tag : '' }}"
+                    placeholder='Pilih Tag'
+                    class='flexdatalist form-control'
+                    data-min-length='1'
+                    multiple=''
+                    data-selection-required='1'
+                    list='tags'
+                    name='tag'>
+
+                <datalist id="tags">
+                    @if ($tag)
+                        @foreach ($tag as $data)
+                            <option value="{{ $data->name }}">{{ $data->name }}</option>  
+                        @endforeach
+                    @endif
+                </datalist>
+                @if($errors->has('tag'))
+                    <p class="text-danger">{{ $errors->first('tag') }}</p>
+                @endif  
+            </div>
+            {{-- <div class="form-group">
                 <label for="exampleFormControlFile1">Tag</label>
                 <div class="row mb-3">
                     <div class="col-4">
@@ -63,7 +86,7 @@
                     <p class="text-danger">{{ $errors->first('list_tag') }}</p>
                 @endif 
                 <p class="text-danger notif-salah"></p>
-            </div>
+            </div> --}}
             <div class="form-group">
                 <label for="exampleFormControlFile1">Judul</label>
                 <input type="text" name="judul" id="" placeholder="Judul" class="form-control  @if($errors->has('judul')) is-invalid @endif" value="{{ $content->judul }}">
@@ -214,6 +237,12 @@
             }else{
                 $(".notif-salah").text("masukkan tag!");
             }
+        });
+    </script>
+    <script>
+        $('.flexdatalist').flexdatalist({
+            selectionRequired: 1,
+            minLength: 1
         });
     </script>
 @endsection

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use App\Content;
 use App\MetaContent;
+use App\Tag;
 use Illuminate\Support\Facades\File;
 
 class BeritaController extends Controller
@@ -20,11 +21,12 @@ class BeritaController extends Controller
 
     public function formBerita(){
         $category = Category::all();
-        return view('pages.admin.tambah_berita', compact('category'));
+        $tag = Tag::all();
+        return view('pages.admin.tambah_berita', compact('category', 'tag'));
     }
 
     public function tambahBerita(Request $request){
-
+        
         $request->validate([
             'category' => 'required',
             'judul' => 'required',
@@ -38,7 +40,7 @@ class BeritaController extends Controller
             'meta_desc_en' => 'required',
             'meta_keywords_en' => 'required',
             'image' => 'required|mimes:jpg,png,jpeg,gif,svg|max:2048',
-            'list_tag' => 'required'
+            'tag' => 'required'
         ], [
             'category.required' => 'category harus dipilih',
             'judul.required' => 'judul tidak boleh kosong',
@@ -54,13 +56,13 @@ class BeritaController extends Controller
             'image.required' => 'image tidak boleh kosong',
             'image.mimes' => 'image harus jpg, png, jpeg, gif, svg',
             'image.max' => 'image max ukuran 2048',
-            'list_tag.required' => 'tag tidak boleh kosong'
+            'tag.required' => 'tag tidak boleh kosong'
         ]);
         //dd($request);
         $content = new Content();
         $content->id_author = auth()->user()->id;
         $content->id_category = $request->category;
-        $content->tag = count($request->list_tag) > 1 ? implode(',', $request->list_tag) : implode('', $request->list_tag);
+        $content->tag = $request->tag;
         $content->title = Str::slug($request->judul, '-');
         $content->judul = $request->judul;
         $content->content = $request->content;
@@ -100,9 +102,10 @@ class BeritaController extends Controller
             $content = Content::where('title', $title)->first();       
             $meta = MetaContent::where('id_content', $content->id)->first();
             $category = Category::all();
+            $tag = Tag::all();
 
             if($content){
-                return view('pages.admin.edit', compact('content', 'category', 'meta'));
+                return view('pages.admin.edit', compact('content', 'category', 'meta', 'tag'));
             }else{
                 return redirect('/admin/home')->with(['error' => 'Ada data yang belum lengkap']);
             }
@@ -128,7 +131,7 @@ class BeritaController extends Controller
                     'meta_title_en' => 'required',
                     'meta_desc_en' => 'required',
                     'meta_keywords_en' => 'required',
-                    'list_tag' => 'required'
+                    'tag' => 'required'
                 ], [
                     'category.required' => 'category tidak boleh kosong',
                     'judul.required' => 'judul tidak boleh kosong',
@@ -141,14 +144,14 @@ class BeritaController extends Controller
                     'meta_title_en.required' => 'meta_title_en tidak boleh kosong',
                     'meta_desc_en.required' => 'meta_desc_en tidak boleh kosong',
                     'meta_keywords_en.required' => 'meta_keywords_en tidak boleh kosong',
-                    'list_tag.required' => 'tag tidak boleh kosong'
+                    'tag.required' => 'tag tidak boleh kosong'
                 ]);
     
                 $content = Content::where('title', $request->title)->first();
     
                 if($content){
                     $content->id_category = $request->category;
-                    $content->tag = count($request->list_tag) > 1 ? implode(',', $request->list_tag) : implode('', $request->list_tag);
+                    $content->tag = $request->tag;
                     $content->title = Str::slug($request->judul, '-');
                     $content->judul = $request->judul;
                     $content->content = $request->content;
@@ -190,7 +193,7 @@ class BeritaController extends Controller
                 'meta_desc_en' => 'required',
                 'meta_keywords_en' => 'required',
                 'image' => 'required|mimes:jpg,png,jpeg,gif,svg|max:2048',
-                'list_tag' => 'required'
+                'tag' => 'required'
             ], [
                 'category.required' => 'category tidak boleh kosong',
                 'judul.required' => 'judul tidak boleh kosong',
@@ -206,14 +209,14 @@ class BeritaController extends Controller
                 'image.required' => 'image tidak boleh kosong',
                 'image.mimes' => 'image harus jpg, png, jpeg, gif, svg',
                 'image.max' => 'image max ukuran 2048',
-                'list_tag.required' => 'tag tidak boleh kosong'
+                'tag.required' => 'tag tidak boleh kosong'
             ]);
     
             $content = Content::where('title', $request->title)->first();
     
             if($content){
                 $content->id_category = $request->category;
-                $content->tag = count($request->list_tag) > 1 ? implode(',', $request->list_tag) : implode('', $request->list_tag);
+                $content->tag = $request->tag;
                 $content->title = Str::slug($request->judul, '-');
                 $content->judul = $request->judul;
                 $content->content = $request->content;

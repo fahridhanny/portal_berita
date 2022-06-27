@@ -17,17 +17,17 @@
         <form action="/admin/tambah-tag" method="post" class="form">
             @csrf
             <div class="form-group">
-                <label for="exampleFormControlFile1">Name_Id</label>
-                <input type="text" name="name_id" id="" placeholder="Name_Id" class="form-control @if($errors->has('name_id')) is-invalid @endif">
-                @if($errors->has('name_id'))
-                    <p class="text-danger">{{ $errors->first('name_id') }}</p>
+                <label for="exampleFormControlFile1">Name</label>
+                <input type="text" name="name" id="" placeholder="Name" class="form-control @if($errors->has('name')) is-invalid @endif">
+                @if($errors->has('name'))
+                    <p class="text-danger">{{ $errors->first('name') }}</p>
                 @endif  
             </div>
             <div class="form-group">
-                <label for="exampleFormControlFile1">Name_En</label>
-                <input type="text" name="name_en" id="" placeholder="Name_En" class="form-control @if($errors->has('name_en')) is-invalid @endif">
-                @if($errors->has('name_en'))
-                    <p class="text-danger">{{ $errors->first('name_en') }}</p>
+                <label for="exampleFormControlFile1">Description</label>
+                <input type="text" name="description" id="" placeholder="Description" class="form-control @if($errors->has('description')) is-invalid @endif">
+                @if($errors->has('description'))
+                    <p class="text-danger">{{ $errors->first('description') }}</p>
                 @endif  
             </div>
             <button type="submit" class="btn btn-primary">Simpan</button>

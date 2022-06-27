@@ -49,6 +49,10 @@
   <script src="{{ asset('admin/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
   <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
 
+  {{-- flexdata --}}
+  <link href="{{ asset('css/jquery.flexdatalist.min.css') }}" rel="stylesheet" type="text/css">
+  <script src="{{ asset('js/jquery.flexdatalist.min.js') }}"></script>
+
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
