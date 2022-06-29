@@ -18,8 +18,7 @@
                 <th>No. </th>
                 <th>Name</th>
                 <th>Description</th>
-                <th>Edit</th>
-                <th>Hapus</th>
+                <th>Aksi</th>
             </tr>
             </thead>
             <tbody>
@@ -31,8 +30,12 @@
                     <th>{{ $no++ }}</th>
                     <td>{{ $data->name }}</td>
                     <td>{{ $data->description }}</td>
-                    <td><a href="/admin/edit-tag/{{ $data->id }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                    <td><a href="/admin/hapus-tag/{{ $data->id }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a></td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                            <a href="/admin/edit-tag/{{ $data->id }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a href="/admin/hapus-tag/{{ $data->id }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                        </div>
+                    </td>
                 </tr>
             @endforeach
             </tbody>

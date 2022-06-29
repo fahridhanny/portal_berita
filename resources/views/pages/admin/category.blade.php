@@ -18,8 +18,7 @@
                 <th>No. </th>
                 <th>Category</th>
                 <th>Category_En</th>
-                <th>Edit</th>
-                <th>Hapus</th>
+                <th>Aksi</th>
             </tr>
             </thead>
             <tbody>
@@ -31,8 +30,12 @@
                     <th>{{ $no++ }}</th>
                     <td>{{ $data->category }}</td>
                     <td>{{ $data->category_en }}</td>
-                    <td><a href="/admin/edit-kategori/{{ $data->category }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                    <td><a href="/admin/hapus-kategori/{{ $data->id }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a></td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                            <a href="/admin/edit-kategori/{{ $data->category }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a href="/admin/hapus-kategori/{{ $data->id }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                        </div>
+                    </td>
                 </tr>
             @endforeach
             </tbody>

@@ -20,9 +20,7 @@
                 <th>Judul</th>
                 <th>Image</th>
                 <th>Status</th>
-                <th>Priview</th>
-                <th>Edit</th>
-                <th>Hapus</th>
+                <th>Aksi</th>
             </tr>
             </thead>
             <tbody>
@@ -36,14 +34,18 @@
                     <td>{{ $content->judul }}</td>
                     <td><img src="{{ url('images/'.$content->image) }}" alt="{{ $content->title }}" height="154" width="154"></td>
                     <td>
-                        <select class="form-select" aria-label="Default select example" id="status-{{ $content->id }}" name="status" data="{{ $content->id }}">
+                        <select class="form-control" aria-label="Default select example" id="status-{{ $content->id }}" name="status" data="{{ $content->id }}">
                             <option value="1" @if ($content->status == 1) selected @endif>Draft</option>
                             <option value="2" @if ($content->status == 2) selected @endif>Submited</option>
                         </select>
                     </td>
-                    <td><a href="/admin/priview/berita/{{ $content->title }}" class="btn btn-warning" target="_blank"><i class="fa-solid fa-eye"></i></a></td>
-                    <td><a href="/admin/edit-berita/{{ $content->title }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                    <td><a href="/admin/hapus-berita/{{ $content->title }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a></td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                            <a href="/admin/priview/berita/{{ $content->title }}" class="btn btn-warning" target="_blank"><i class="fa-solid fa-eye"></i></a>
+                            <a href="/admin/edit-berita/{{ $content->title }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a href="/admin/hapus-berita/{{ $content->title }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                        </div>
+                    </td>
                 </tr>
             @endforeach
             </tbody>

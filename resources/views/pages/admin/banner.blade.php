@@ -18,8 +18,7 @@
                 <th>No. </th>
                 <th>Title</th>
                 <th>Image</th>
-                <th>Edit</th>
-                <th>Hapus</th>
+                <th>Aksi</th>
             </tr>
             </thead>
             <tbody>
@@ -31,8 +30,12 @@
                     <th>{{ $no++ }}</th>
                     <td>{{ $data->title }}</td>
                     <td><img src="{{ url('images/banner/'.$data->image) }}" alt="{{ $data->title }}" height="154" width="154"></td>
-                    <td><a href="/admin/edit-banner/{{ $data->title }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a></td>
-                    <td><a href="/admin/hapus-banner/{{ $data->title }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a></td>
+                    <td>
+                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                            <a href="/admin/edit-banner/{{ $data->title }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a href="/admin/hapus-banner/{{ $data->title }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                        </div>
+                    </td>
                 </tr>
             @endforeach
             </tbody>
