@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Content;
+use App\ContentTag;
 use App\MetaContent;
+use App\Tag;
 
 class ContentDetailController extends Controller
 {
@@ -48,7 +50,22 @@ class ContentDetailController extends Controller
             }else{
                 $content['meta'] = '';
             }
-            
+
+            $content_tag = ContentTag::where('id_content', $content->id)->get();
+            if($content_tag){
+                $tag = Tag::get();
+                $arrTag = array();
+                foreach ($content_tag as $data) {
+                    foreach ($tag as $value) {
+                        if ($data->id_tag == $value->id) {
+                            array_push($arrTag, $value->name);
+                        }
+                    }
+                }
+                $content['tag'] = $arrTag;    
+            }else{
+                $content['tag'] = '';    
+            }
             //dd(explode(',', $content->tag));
             return view('pages.detail_berita', compact('content'));
         }else{

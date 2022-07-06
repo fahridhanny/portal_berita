@@ -25,7 +25,6 @@ class CreateContentsTable extends Migration
             $table->string('content_en');
             $table->string('image');
             $table->string('view');
-            $table->string('tag');
             $table->integer('status');
             $table->timestamps();
  

@@ -60,8 +60,7 @@
                 </div>
                 <div class="sn-container mb-3">
                     @if ($content->tag)
-                        @php $list_tag = explode(',', $content->tag); @endphp
-                        @foreach ($list_tag as $tag)
+                        @foreach ($content->tag as $tag)
                             <a href="#" class="btn btn-outline-danger">{{ $tag }}</a>
                         @endforeach
                     @endif

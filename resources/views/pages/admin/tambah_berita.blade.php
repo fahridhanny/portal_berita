@@ -38,21 +38,18 @@
                 <div class="form-group" style="margin-right: 50%">
                     <label for="browser" class="form-label">Tag</label>
                     <input type='text'
-                        placeholder='Pilih Tag'
+                        placeholder='Write your country name'
                         class='flexdatalist form-control'
+                        data-data='/admin/getTags'
+                        data-search-in='name'
+                        multiple='multiple'
                         data-min-length='1'
-                        multiple=''
-                        data-selection-required='1'
-                        list='tags'
+                        {{-- data-visible-properties='["name","capital","continent"]' --}}
+                        data-selection-required='true'
+                        data-value-property='id'
+                        data-min-length='1'
                         name='tag'>
 
-                    <datalist id="tags">
-                        @if ($tag)
-                            @foreach ($tag as $data)
-                                <option value="{{ $data->name }}">{{ $data->name }}</option>  
-                            @endforeach
-                        @endif
-                    </datalist>
                     @if($errors->has('tag'))
                         <p class="text-danger">{{ $errors->first('tag') }}</p>
                     @endif  
@@ -146,9 +143,11 @@
             <form action="/admin/tambah-berita" method="post" class="form" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
-                    <label for="exampleFormControlFile1">Related</label>
-                    <input type="text" name="meta_keywords_en" id="" placeholder="Related" class="form-control  @if($errors->has('meta_keywords_en')) is-invalid @endif">
-                    @error('meta_keywords_en')
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input @if($errors->has('related')) is-invalid @endif" id="customFile">
+                        <label class="custom-file-label" for="customFile">Pilih Article</label>
+                    </div>
+                    @error('related')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
                 </div>
@@ -177,7 +176,7 @@
         CKEDITOR.replace('summernote', options);
         CKEDITOR.replace('summernote2', options2);
     </script>
-    <script type="text/javascript">
+    {{-- <script type="text/javascript">
         $("#simpan_tag").click(function( event ) {
             event.preventDefault();
             var tag = $("input[name=tag]").val();
@@ -200,11 +199,15 @@
                 $(".notif-salah").text("masukkan tag!");
             }
         });
-    </script>
+    </script> --}}
     <script>
         $('.flexdatalist').flexdatalist({
-            selectionRequired: 1,
-            minLength: 1
+            minLength: 1,
+            valueProperty: 'id',
+            selectionRequired: true,
+            // visibleProperties: ["name","capital","continent"],
+            searchIn: 'name',
+            data: '/admin/getTags'
         });
     </script>
     <script>
@@ -213,4 +216,9 @@
             $(this).tab('show')
         })
     </script>
+    {{-- <script src="{{ asset('/vendor/laravel-filemanager/js/lfm.js') }}"></script> --}}
+    {{-- <script type="text/javascript">
+        var route_prefix = "/laravel-filemanager";
+        $('#lfm').filemanager('image', {prefix: route_prefix});
+    </script> --}}
 @endsection

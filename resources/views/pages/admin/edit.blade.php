@@ -30,63 +30,32 @@
                 @endif  
             </div>
             <div class="form-group" style="margin-right: 50%">
+                @php
+                    $tagNew = array();
+                    foreach ($content_tag as $key => $value) {
+                        array_push($tagNew, $value->name);
+                    }
+                    $tags = implode(',',$tagNew);
+                @endphp
                 <label for="browser" class="form-label">Tag</label>
                 <input type='text'
-                    value="{{ $content->tag ? $content->tag : '' }}"
-                    placeholder='Pilih Tag'
-                    class='flexdatalist form-control'
-                    data-min-length='1'
-                    multiple=''
-                    data-selection-required='1'
-                    list='tags'
-                    name='tag'>
+                        value='{{ $tags }}'
+                        placeholder='Write your country name'
+                        class='flexdatalist form-control'
+                        data-data='/admin/getTags'
+                        data-search-in='name'
+                        data-visible-properties='["name"]'
+                        data-selection-required='true'
+                        data-value-property='name'
+                        data-text-property='{name}'
+                        data-min-length='1'
+                        multiple='multiple'
+                        name='tag'>
 
-                <datalist id="tags">
-                    @if ($tag)
-                        @foreach ($tag as $data)
-                            <option value="{{ $data->name }}">{{ $data->name }}</option>  
-                        @endforeach
-                    @endif
-                </datalist>
                 @if($errors->has('tag'))
                     <p class="text-danger">{{ $errors->first('tag') }}</p>
                 @endif  
             </div>
-            {{-- <div class="form-group">
-                <label for="exampleFormControlFile1">Tag</label>
-                <div class="row mb-3">
-                    <div class="col-4">
-                        <input type="text" name="tag" id="" placeholder="Tag" class="form-control  @if($errors->has('tag')) is-invalid @endif">
-                    </div>
-                    <div class="col-4">
-                        <a href="javascript:void(0);" class="btn btn-white border border-dark" id="simpan_tag"><i class="fa-solid fa-plus"></i> Add Tag</a>
-                    </div>
-                </div>
-                <div class="list_tag">
-                    @php
-                       $list_tag = explode(",", $content->tag); 
-                    @endphp
-                    @if ($content->tag)
-                        @foreach ($list_tag as $tag)
-                            <div class='row'>
-                                <div class='col-3'>
-                                    <div class='alert alert-secondary border border-dark alert-dismissible fade show' role='alert'>
-                                        <input type='hidden' name='list_tag[]' value="{{ $tag }}">
-                                        {{ $tag }}
-                                        <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-                                        <span aria-hidden='true'>&times;</span>
-                                        </button>
-                                    </div>  
-                                </div>
-                            </div>
-                        @endforeach
-                    @endif
-                </div>
-                @if($errors->has('list_tag'))
-                    <p class="text-danger">{{ $errors->first('list_tag') }}</p>
-                @endif 
-                <p class="text-danger notif-salah"></p>
-            </div> --}}
             <div class="form-group">
                 <label for="exampleFormControlFile1">Judul</label>
                 <input type="text" name="judul" id="" placeholder="Judul" class="form-control  @if($errors->has('judul')) is-invalid @endif" value="{{ $content->judul }}">
@@ -173,28 +142,10 @@
                     <p class="text-danger">{{ $message }}</p>
                 @enderror
             </div>
-            {{-- <div class="form-group">
-                <div class="input-group">
-                    <span class="input-group-btn">
-                      <a id="imageLFM" data-input="thumbnail" data-preview="holder" class="btn btn-primary">
-                        <i class="fa-solid fa-image"></i> Choose
-                      </a>
-                    </span>
-                    <input id="thumbnail" class="form-control" type="text" name="filepath">
-                </div>
-                <img id="holder" style="margin-top:15px;max-height:100px;">
-            </div> --}}
             <button type="submit" class="btn btn-primary">Simpan</button>
         </form>
     </div>
   </div>
-    
-    {{-- <script src="{{ asset('vendor/laravel-filemanager/js/lfm.js') }}"></script>
-
-    <script type="text/javascript">
-        var route_prefix = "/laravel-filemanager";
-        $('#imageLFM').filemanager('image', {prefix: route_prefix});
-    </script> --}}
 
     <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
     <script>
@@ -241,8 +192,14 @@
     </script>
     <script>
         $('.flexdatalist').flexdatalist({
-            selectionRequired: 1,
-            minLength: 1
+            selectionRequired: true,
+            minLength: 1,
+            textProperty: '{name}',
+            valueProperty: 'name',
+            selectionRequired: true,
+            visibleProperties: ["name"],
+            searchIn: 'name',
+            data: '/admin/getTags'
         });
     </script>
 @endsection

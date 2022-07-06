@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use App\Content;
+use App\ContentTag;
 use App\MetaContent;
 use App\Tag;
 use Illuminate\Support\Facades\File;
@@ -19,14 +20,17 @@ class BeritaController extends Controller
         return view('pages.admin.berita', compact('contents'));
     }
 
+    public function getTags(){
+        $tag = Tag::get();
+        return $tag;
+    }
+
     public function formBerita(){
         $category = Category::all();
-        $tag = Tag::all();
-        return view('pages.admin.tambah_berita', compact('category', 'tag'));
+        return view('pages.admin.tambah_berita', compact('category'));
     }
 
     public function tambahBerita(Request $request){
-        
         $request->validate([
             'category' => 'required',
             'judul' => 'required',
@@ -62,7 +66,6 @@ class BeritaController extends Controller
         $content = new Content();
         $content->id_author = auth()->user()->id;
         $content->id_category = $request->category;
-        $content->tag = $request->tag;
         $content->title = Str::slug($request->judul, '-');
         $content->judul = $request->judul;
         $content->content = $request->content;
@@ -78,6 +81,17 @@ class BeritaController extends Controller
         $content->image = $nameImage;
         $content->status = 1;
         $content->save();
+
+        $newContent = Content::where("judul", $request->judul)->first();
+        $tag = explode(',', $request->tag);
+        if ($newContent) {
+            foreach ($tag as $key => $value) {
+                $content_tag = new ContentTag();
+                $content_tag->id_content = $newContent->id;
+                $content_tag->id_tag = $value;
+                $content_tag->save();
+            }
+        }
 
         $idMeta = Content::where('judul', $request->judul)->first();
         if ($idMeta) {
@@ -102,10 +116,12 @@ class BeritaController extends Controller
             $content = Content::where('title', $title)->first();       
             $meta = MetaContent::where('id_content', $content->id)->first();
             $category = Category::all();
-            $tag = Tag::all();
-
+            $tag = Tag::get(); 
+            $content_tag = ContentTag::join('contents', 'contents.id', '=', 'content_tags.id_content')
+                                        ->join('tags', 'tags.id', '=', 'content_tags.id_tag')
+                                        ->where("title", $title)->get();
             if($content){
-                return view('pages.admin.edit', compact('content', 'category', 'meta', 'tag'));
+                return view('pages.admin.edit', compact('content', 'category', 'meta', 'content_tag', 'tag'));
             }else{
                 return redirect('/admin/home')->with(['error' => 'Ada data yang belum lengkap']);
             }
@@ -115,7 +131,7 @@ class BeritaController extends Controller
     }
 
     public function editBerita($title = '', Request $request){
-        //dd($request);
+    
         if($title){
             if ($request->imageValue) {
 
@@ -131,7 +147,7 @@ class BeritaController extends Controller
                     'meta_title_en' => 'required',
                     'meta_desc_en' => 'required',
                     'meta_keywords_en' => 'required',
-                    'tag' => 'required'
+                    // 'tag' => 'required'
                 ], [
                     'category.required' => 'category tidak boleh kosong',
                     'judul.required' => 'judul tidak boleh kosong',
@@ -144,14 +160,13 @@ class BeritaController extends Controller
                     'meta_title_en.required' => 'meta_title_en tidak boleh kosong',
                     'meta_desc_en.required' => 'meta_desc_en tidak boleh kosong',
                     'meta_keywords_en.required' => 'meta_keywords_en tidak boleh kosong',
-                    'tag.required' => 'tag tidak boleh kosong'
+                    // 'tag.required' => 'tag tidak boleh kosong'
                 ]);
     
                 $content = Content::where('title', $request->title)->first();
     
                 if($content){
                     $content->id_category = $request->category;
-                    $content->tag = $request->tag;
                     $content->title = Str::slug($request->judul, '-');
                     $content->judul = $request->judul;
                     $content->content = $request->content;
@@ -159,6 +174,30 @@ class BeritaController extends Controller
                     $content->judul_en = $request->judul_en;
                     $content->content_en = $request->content_en;
                     $content->save();
+
+                    $content_tag = ContentTag::where('id_content', $content->id)->get();
+                    if($content_tag){
+                        $tags = explode(',', $request->tag);
+                        $tag = Tag::all();
+                        $tagArr = array();
+                        foreach ($tag as $value) {
+                            foreach ($tags as $data) {
+                                if($data == $value->name){
+                                    array_push($tagArr, $value->id);
+                                }
+                            }
+                        }
+                        
+                        foreach ($content_tag as $data) {
+                            $data->delete();        
+                        }
+                        foreach ($tagArr as $value) {
+                            $newTag = new ContentTag();
+                            $newTag->id_content = $content->id;
+                            $newTag->id_tag = $value;
+                            $newTag->save();
+                        }
+                    }
     
                     $metaContent = MetaContent::where('id_content', $content->id)->first();
                     if ($metaContent) {
@@ -229,6 +268,30 @@ class BeritaController extends Controller
                     
                 $content->image = $nameImage;
                 $content->save();
+
+                $content_tag = ContentTag::where('id_content', $content->id)->get();
+                if($content_tag){
+                    $tags = explode(',', $request->tag);
+                    $tag = Tag::all();
+                    $tagArr = array();
+                    foreach ($tag as $value) {
+                        foreach ($tags as $data) {
+                            if($data == $value->name){
+                                array_push($tagArr, $value->id);
+                            }
+                        }
+                    }
+                        
+                    foreach ($content_tag as $data) {
+                        $data->delete();        
+                    }
+                    foreach ($tagArr as $value) {
+                        $newTag = new ContentTag();
+                        $newTag->id_content = $content->id;
+                        $newTag->id_tag = $value;
+                        $newTag->save();
+                    }
+                }
     
                 $metaContent = MetaContent::where('id_content', $content->id)->first();
                 if ($metaContent) {
@@ -258,11 +321,15 @@ class BeritaController extends Controller
             $content = Content::where('title', $title)->first();
 
             if($content){
+                $content_tag = ContentTag::where('id_content', $content->id)->get();
+                if($content_tag){
+                    foreach ($content_tag as $data) {
+                        $data->delete();
+                    }    
+                }
                 $meta = MetaContent::where('id_content', $content->id)->first();
                 if($meta){
                     $meta->delete();
-                }else{
-                    return redirect()->back()->with(['error' => 'meta yang dihapus tidak ditemukan']);       
                 }
                 
                 $image_path = public_path('images/').$content->image;
@@ -304,6 +371,21 @@ class BeritaController extends Controller
         $content = Content::where('title', $title)->first();
         if ($content == '') {
             return redirect('/admin/content');
+        }
+        $content_tag = ContentTag::where('id_content', $content->id)->get();
+        if($content_tag){
+            $tag = Tag::get();
+            $arrTag = array();
+            foreach ($content_tag as $data) {
+                foreach ($tag as $value) {
+                    if ($data->id_tag == $value->id) {
+                        array_push($arrTag, $value->name);
+                    }
+                }
+            }
+            $content['tag'] = $arrTag;    
+        }else{
+            $content['tag'] = '';    
         }
         return view('pages.admin.priview', compact('content'));
     }
