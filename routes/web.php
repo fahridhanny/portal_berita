@@ -72,6 +72,8 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['aut
     Route::post('/publish-berita', 'BeritaController@publishBerita');
     Route::get('/priview/berita/{title?}', 'BeritaController@priview');
     Route::get('/getTags', 'BeritaController@getTags');
+    Route::get('/getBerita', 'BeritaController@getBerita');
+    Route::post('/tambah-related', 'BeritaController@tambahRelated');
 
     Route::get('/kategori', 'CategoryController@index');
     Route::get('/tambah-kategori', 'CategoryController@formKategori');

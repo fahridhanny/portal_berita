@@ -3,24 +3,15 @@
 @section('content')
 <div class="card card-outline card-info">
     <div class="card-header">
-      <ul class="nav nav-tabs card-header-tabs" id="bologna-list" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" href="#add" role="tab" aria-controls="add" aria-selected="true">Add</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link"  href="#related" role="tab" aria-controls="related" aria-selected="false">Related</a>
-        </li>
-      </ul>
+        Tambah Berita
     </div>
     <div class="card-body">
-       <div class="tab-content mt-3">
-        <div class="tab-pane active" id="add" role="tabpanel">
-            @if (session('success'))
+        @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @elseif(session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-            <form action="/admin/tambah-berita" method="post" class="form" enctype="multipart/form-data">
+        <form action="/admin/tambah-berita" method="post" class="form" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group" style="margin-right: 70%">
                     <label for="exampleFormControlFile1">Category</label>
@@ -38,13 +29,12 @@
                 <div class="form-group" style="margin-right: 50%">
                     <label for="browser" class="form-label">Tag</label>
                     <input type='text'
-                        placeholder='Write your country name'
+                        placeholder='Write your Tag Content'
                         class='flexdatalist form-control'
                         data-data='/admin/getTags'
                         data-search-in='name'
                         multiple='multiple'
                         data-min-length='1'
-                        {{-- data-visible-properties='["name","capital","continent"]' --}}
                         data-selection-required='true'
                         data-value-property='id'
                         data-min-length='1'
@@ -71,7 +61,7 @@
                 <div class="form-group">
                     <label for="exampleFormControlFile1">Content</label>
                     <textarea id="summernote" name="content" class="form-control @if($errors->has('content')) is-invalid @endif">
-                    
+                        
                     </textarea>
                     @error('content')
                         <p class="text-danger">{{ $message }}</p>
@@ -80,7 +70,7 @@
                 <div class="form-group">
                     <label for="exampleFormControlFile1">Content_En</label>
                     <textarea id="summernote2" name="content_en" class="form-control @if($errors->has('content_en')) is-invalid @endif">
-                        
+                            
                     </textarea>
                     @error('content_en')
                         <p class="text-danger">{{ $message }}</p>
@@ -135,26 +125,42 @@
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
                 </div>
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </form>
-        </div>
-         
-        <div class="tab-pane" id="related" role="tabpanel" aria-labelledby="history-tab">  
-            <form action="/admin/tambah-berita" method="post" class="form" enctype="multipart/form-data">
-                @csrf
-                <div class="form-group">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input @if($errors->has('related')) is-invalid @endif" id="customFile">
-                        <label class="custom-file-label" for="customFile">Pilih Article</label>
+                <div id="accordion">
+                    <div class="card">
+                      <div class="card-header" id="headingOne" style="background-color: gray">
+                        <h5 class="mb-0">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="color: black">
+                                Related
+                            </a>
+                        </h5>
+                      </div>
+                  
+                      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                            <div class="list-related">
+                                <div class="form-group">
+                                    <input type='text'
+                                        placeholder='Write your Related Content'
+                                        class='flexdatalist2 form-control'
+                                        data-data='/admin/getBerita'
+                                        data-search-in='judul'
+                                        data-selection-required='true'
+                                        data-value-property='id'
+                                        data-min-length='0'
+                                        id='relative'
+                                        multiple='multiple'
+                                        name='related'>
+                                    @error('related')
+                                        <p class="text-danger">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                      </div>
                     </div>
-                    @error('related')
-                        <p class="text-danger">{{ $message }}</p>
-                    @enderror
                 </div>
-                <button type="submit" class="btn btn-primary">Add Related</button>
-            </form>
-        </div>
-      </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+        </form>
     </div>
 </div>
     <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
@@ -205,9 +211,17 @@
             minLength: 1,
             valueProperty: 'id',
             selectionRequired: true,
-            // visibleProperties: ["name","capital","continent"],
             searchIn: 'name',
             data: '/admin/getTags'
+        });
+    </script>
+    <script>
+        $('.flexdatalist2').flexdatalist({
+            minLength: 0,
+            valueProperty: 'id',
+            selectionRequired: true,
+            searchIn: 'judul',
+            data: '/admin/getBerita'
         });
     </script>
     <script>

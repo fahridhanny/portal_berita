@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Content;
+use App\ContentRelated;
 use App\ContentTag;
 use App\MetaContent;
 use App\Tag;
@@ -66,7 +67,25 @@ class ContentDetailController extends Controller
             }else{
                 $content['tag'] = '';    
             }
-            //dd(explode(',', $content->tag));
+
+            $content_related = ContentRelated::where('id_content', $content->id)->get();
+            //dd($content_related);
+            if($content_related){
+                $related = Content::get();
+                $arrRelated = array();
+                $arrRelatedImage = array();
+                foreach ($content_related as $data) {
+                    foreach ($related as $value) {
+                        if ($data->id_related == $value->id) {
+                            array_push($arrRelated, $value);
+                        }
+                    }
+                }
+                $content['related'] = $arrRelated;    
+            }else{
+                $content['related'] = '';    
+            }
+        
             return view('pages.detail_berita', compact('content'));
         }else{
             return redirect('/'.app()->getLocale());

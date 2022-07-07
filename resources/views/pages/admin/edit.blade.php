@@ -142,6 +142,49 @@
                     <p class="text-danger">{{ $message }}</p>
                 @enderror
             </div>
+            <div id="accordion">
+                <div class="card">
+                  <div class="card-header" id="headingOne" style="background-color: gray">
+                    <h5 class="mb-0">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="color: black">
+                            Related
+                        </a>
+                    </h5>
+                  </div>
+              
+                  <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <div class="list-related">
+                            @php
+                                $relatedNew = array();
+                                foreach ($content_related as $key => $value) {
+                                    array_push($relatedNew, $value->judul);
+                                }
+                                $related = implode(',',$relatedNew);
+                                // dd($related);
+                            @endphp
+                            <div class="form-group">
+                                <input type='text'
+                                    value='{{ $related }}'
+                                    placeholder='Write your Related Content'
+                                    class='flexdatalist2 form-control'
+                                    data-data='/admin/getBerita'
+                                    data-search-in='judul'
+                                    data-selection-required='true'
+                                    data-value-property='judul'
+                                    data-min-length='0'
+                                    id='relative'
+                                    multiple='multiple'
+                                    name='related'>
+                                @error('related')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
             <button type="submit" class="btn btn-primary">Simpan</button>
         </form>
     </div>
@@ -166,7 +209,7 @@
         CKEDITOR.replace('summernote', options);
         CKEDITOR.replace('summernote2', options2);
     </script>
-    <script type="text/javascript">
+    {{-- <script type="text/javascript">
         $("#simpan_tag").click(function( event ) {
             event.preventDefault();
             var tag = $("input[name=tag]").val();
@@ -189,7 +232,7 @@
                 $(".notif-salah").text("masukkan tag!");
             }
         });
-    </script>
+    </script> --}}
     <script>
         $('.flexdatalist').flexdatalist({
             selectionRequired: true,
@@ -200,6 +243,15 @@
             visibleProperties: ["name"],
             searchIn: 'name',
             data: '/admin/getTags'
+        });
+    </script>
+    <script>
+        $('.flexdatalist2').flexdatalist({
+            minLength: 0,
+            valueProperty: 'judul',
+            selectionRequired: true,
+            searchIn: 'judul',
+            data: '/admin/getBerita'
         });
     </script>
 @endsection

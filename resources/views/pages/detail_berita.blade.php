@@ -66,12 +66,10 @@
                     @endif
                 </div>
                 <div class="sn-related">
-                    @php
-                        $releated = App\Content::where('id_category', $content->id_category)->orderby('id', 'DESC')->limit(3)->get();
-                    @endphp
                     <h2>Related News</h2>
                     <div class="row sn-slider">
-                        @foreach ($releated as $data)
+                        @if ($content->related)
+                        @foreach ($content->related as $data)
                         <div class="col-md-4">
                             <div class="sn-img">
                                 <img src="{{ url('images/'.$data->image) }}" height="165px" width="265px"/>
@@ -85,6 +83,7 @@
                             </div>
                         </div>
                         @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
@@ -92,28 +91,4 @@
         </div>
     </div>
 </div>
-<!-- Single News End-->
-
-
-    {{-- <div class="container">
-        <div class="row">
-            <div class="col">
-                <h1>@if (app()->getLocale() == 'id')
-                        {{ $content->judul }}                    
-                    @else
-                        {{ $content->judul_en }}
-                    @endif
-                </h1>
-                <img src="{{ url('images/'.$content->image) }}" alt="" height="450px" width="550">
-                <br>
-                <br>
-                <p>@if (app()->getLocale() == 'id')
-                        {{ $content->content }}                    
-                    @else
-                        {{ $content->content_en }}                    
-                    @endif
-                </p>
-            </div>
-        </div>
-    </div> --}}
 @endsection

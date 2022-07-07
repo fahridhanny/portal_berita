@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use App\Content;
+use App\ContentRelated;
 use App\ContentTag;
 use App\MetaContent;
 use App\Tag;
@@ -23,6 +24,15 @@ class BeritaController extends Controller
     public function getTags(){
         $tag = Tag::get();
         return $tag;
+    }
+
+    public function getBerita(){
+        $content = Content::get();
+        return $content;
+    }
+
+    public function tambahRelated(Request $request){
+        dd($request->all());
     }
 
     public function formBerita(){
@@ -44,7 +54,8 @@ class BeritaController extends Controller
             'meta_desc_en' => 'required',
             'meta_keywords_en' => 'required',
             'image' => 'required|mimes:jpg,png,jpeg,gif,svg|max:2048',
-            'tag' => 'required'
+            'tag' => 'required',
+            'related' => 'required'
         ], [
             'category.required' => 'category harus dipilih',
             'judul.required' => 'judul tidak boleh kosong',
@@ -60,9 +71,17 @@ class BeritaController extends Controller
             'image.required' => 'image tidak boleh kosong',
             'image.mimes' => 'image harus jpg, png, jpeg, gif, svg',
             'image.max' => 'image max ukuran 2048',
-            'tag.required' => 'tag tidak boleh kosong'
+            'tag.required' => 'tag tidak boleh kosong',
+            'related.required' => 'related tidak boleh kosong'
         ]);
         //dd($request);
+        $tag = explode(',', $request->tag);
+        $related = explode(',', $request->related);
+
+        if (count($related) != 3) {
+            return redirect()->back()->with(['error' => 'Related harus berjumlah 3']);
+        }
+
         $content = new Content();
         $content->id_author = auth()->user()->id;
         $content->id_category = $request->category;
@@ -83,7 +102,6 @@ class BeritaController extends Controller
         $content->save();
 
         $newContent = Content::where("judul", $request->judul)->first();
-        $tag = explode(',', $request->tag);
         if ($newContent) {
             foreach ($tag as $key => $value) {
                 $content_tag = new ContentTag();
@@ -91,12 +109,16 @@ class BeritaController extends Controller
                 $content_tag->id_tag = $value;
                 $content_tag->save();
             }
-        }
 
-        $idMeta = Content::where('judul', $request->judul)->first();
-        if ($idMeta) {
+            foreach ($related as $key => $value) {
+                $content_related = new ContentRelated();
+                $content_related->id_content = $newContent->id;
+                $content_related->id_related = $value;
+                $content_related->save();
+            }
+
             $metaContent = new MetaContent();
-            $metaContent->id_content = $idMeta->id;
+            $metaContent->id_content = $newContent->id;
             $metaContent->meta_title = $request->meta_title;
             $metaContent->meta_desc = $request->meta_desc;
             $metaContent->meta_keywords = $request->meta_keywords;
@@ -105,7 +127,7 @@ class BeritaController extends Controller
             $metaContent->meta_keywords_en = $request->meta_keywords_en;
             $metaContent->save();
         }else{
-            return redirect()->back()->with(['error' => 'meta yang dituju tidak ditemukan']); 
+            return redirect()->back()->with(['error' => 'content yang dituju tidak ditemukan']); 
         }
 
         return redirect('/admin/content')->with(['success' => 'Berhasil menambah berita']);
@@ -114,14 +136,15 @@ class BeritaController extends Controller
     public function formEditBerita($title = '', Request $request){
         if ($title) {
             $content = Content::where('title', $title)->first();       
-            $meta = MetaContent::where('id_content', $content->id)->first();
-            $category = Category::all();
-            $tag = Tag::get(); 
-            $content_tag = ContentTag::join('contents', 'contents.id', '=', 'content_tags.id_content')
-                                        ->join('tags', 'tags.id', '=', 'content_tags.id_tag')
-                                        ->where("title", $title)->get();
             if($content){
-                return view('pages.admin.edit', compact('content', 'category', 'meta', 'content_tag', 'tag'));
+                $meta = MetaContent::where('id_content', $content->id)->first();
+                $category = Category::all();
+                $content_tag = ContentTag::join('contents', 'contents.id', '=', 'content_tags.id_content')
+                                            ->join('tags', 'tags.id', '=', 'content_tags.id_tag')
+                                            ->where("title", $title)->get();
+                $content_related = ContentRelated::join('contents', 'contents.id', '=', 'content_related.id_related')
+                                                ->where("id_content", $content->id)->get();
+                return view('pages.admin.edit', compact('content', 'category', 'meta', 'content_tag', 'content_related'));
             }else{
                 return redirect('/admin/home')->with(['error' => 'Ada data yang belum lengkap']);
             }
@@ -131,7 +154,7 @@ class BeritaController extends Controller
     }
 
     public function editBerita($title = '', Request $request){
-    
+
         if($title){
             if ($request->imageValue) {
 
@@ -162,7 +185,13 @@ class BeritaController extends Controller
                     'meta_keywords_en.required' => 'meta_keywords_en tidak boleh kosong',
                     // 'tag.required' => 'tag tidak boleh kosong'
                 ]);
-    
+                $tags = explode(',', $request->tag);
+                $content_related = explode(',', $request->related);
+
+                if (count($content_related) != 3) {
+                    return redirect()->back()->with(['error' => 'Related harus berjumlah 3']);
+                }
+
                 $content = Content::where('title', $request->title)->first();
     
                 if($content){
@@ -177,7 +206,6 @@ class BeritaController extends Controller
 
                     $content_tag = ContentTag::where('id_content', $content->id)->get();
                     if($content_tag){
-                        $tags = explode(',', $request->tag);
                         $tag = Tag::all();
                         $tagArr = array();
                         foreach ($tag as $value) {
@@ -198,6 +226,30 @@ class BeritaController extends Controller
                             $newTag->save();
                         }
                     }
+
+                    $related = ContentRelated::where('id_content', $content->id)->get();
+                    if ($related) {
+                        $getContent = Content::get();
+                        $arrRelated = array();
+                        foreach ($getContent as $key => $data) {
+                            foreach ($content_related as $key => $value) {
+                                if ($data->judul == $value) {
+                                    array_push($arrRelated, $data->id);
+                                }
+                            }
+                        }
+
+                        foreach ($related as $key => $value) {
+                            $value->delete();
+                        }
+
+                        foreach ($arrRelated as $key => $value) {
+                            $newRelated = new ContentRelated();
+                            $newRelated->id_content = $content->id;
+                            $newRelated->id_related = $value;
+                            $newRelated->save();
+                        }
+                    }
     
                     $metaContent = MetaContent::where('id_content', $content->id)->first();
                     if ($metaContent) {
@@ -210,7 +262,15 @@ class BeritaController extends Controller
                         $metaContent->meta_keywords_en = $request->meta_keywords_en;
                         $metaContent->save();
                     }else{
-                        return redirect()->back()->with(['error' => 'meta yang dituju tidak ditemukan']); 
+                        $newMetaContent = new MetaContent();
+                        $newMetaContent->id_content = $content->id;
+                        $newMetaContent->meta_title = $request->meta_title;
+                        $newMetaContent->meta_desc = $request->meta_desc;
+                        $newMetaContent->meta_keywords = $request->meta_keywords;
+                        $newMetaContent->meta_title_en = $request->meta_title_en;
+                        $newMetaContent->meta_desc_en = $request->meta_desc_en;
+                        $newMetaContent->meta_keywords_en = $request->meta_keywords_en;
+                        $newMetaContent->save();
                     }
                         
                     return redirect('/admin/content')->with(['success' => 'Berhasil merubah berita']);
@@ -250,7 +310,14 @@ class BeritaController extends Controller
                 'image.max' => 'image max ukuran 2048',
                 'tag.required' => 'tag tidak boleh kosong'
             ]);
-    
+            $tags = explode(',', $request->tag);
+            $content_related = explode(',', $request->related);
+
+            if (count($content_related) != 3) {
+                return redirect()->back()->with(['error' => 'Related harus berjumlah 3']);
+            }
+
+
             $content = Content::where('title', $request->title)->first();
     
             if($content){
@@ -271,7 +338,6 @@ class BeritaController extends Controller
 
                 $content_tag = ContentTag::where('id_content', $content->id)->get();
                 if($content_tag){
-                    $tags = explode(',', $request->tag);
                     $tag = Tag::all();
                     $tagArr = array();
                     foreach ($tag as $value) {
@@ -292,6 +358,30 @@ class BeritaController extends Controller
                         $newTag->save();
                     }
                 }
+
+                $related = ContentRelated::where('id_content', $content->id)->get();
+                    if ($related) {
+                        $getContent = Content::get();
+                        $arrRelated = array();
+                        foreach ($getContent as $key => $data) {
+                            foreach ($content_related as $key => $value) {
+                                if ($data->judul == $value) {
+                                    array_push($arrRelated, $data->id);
+                                }
+                            }
+                        }
+
+                        foreach ($related as $key => $value) {
+                            $value->delete();
+                        }
+
+                        foreach ($arrRelated as $key => $value) {
+                            $newRelated = new ContentRelated();
+                            $newRelated->id_content = $content->id;
+                            $newRelated->id_related = $value;
+                            $newRelated->save();
+                        }
+                    }
     
                 $metaContent = MetaContent::where('id_content', $content->id)->first();
                 if ($metaContent) {
@@ -304,7 +394,15 @@ class BeritaController extends Controller
                     $metaContent->meta_keywords_en = $request->meta_keywords_en;
                     $metaContent->save();
                 }else{
-                    return redirect()->back()->with(['error' => 'meta yang dituju tidak ditemukan']); 
+                    $newMetaContent = new MetaContent();
+                    $newMetaContent->id_content = $content->id;
+                    $newMetaContent->meta_title = $request->meta_title;
+                    $newMetaContent->meta_desc = $request->meta_desc;
+                    $newMetaContent->meta_keywords = $request->meta_keywords;
+                    $newMetaContent->meta_title_en = $request->meta_title_en;
+                    $newMetaContent->meta_desc_en = $request->meta_desc_en;
+                    $newMetaContent->meta_keywords_en = $request->meta_keywords_en;
+                    $newMetaContent->save();
                 }
                         
                 return redirect('/admin/content')->with(['success' => 'Berhasil merubah berita']);
@@ -324,6 +422,12 @@ class BeritaController extends Controller
                 $content_tag = ContentTag::where('id_content', $content->id)->get();
                 if($content_tag){
                     foreach ($content_tag as $data) {
+                        $data->delete();
+                    }    
+                }
+                $content_related = ContentRelated::where('id_content', $content->id)->get();
+                if($content_related){
+                    foreach ($content_related as $data) {
                         $data->delete();
                     }    
                 }
