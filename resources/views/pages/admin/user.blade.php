@@ -26,6 +26,7 @@
                 $no = 1;
             @endphp
             @foreach ($user as $data)
+                @if ($data->name != auth()->user()->name)
                 <tr>
                     <th>{{ $no++ }}</th>
                     <td>{{ $data->name }}</td>
@@ -33,10 +34,12 @@
                     <td>
                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                             <a href="/admin/edit-user/{{ $data->id }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
-                            <a href="/admin/hapus-user/{{ $data->id }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                            {{-- <a href="/admin/hapus-user/{{ $data->id }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a> --}}
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal-{{ $data->id }}"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </td>
                 </tr>
+                @endif
             @endforeach
             </tbody>
         </table>
@@ -45,6 +48,30 @@
     <!-- /.card-body -->
   </div>
   <!-- /.card -->
+
+<!-- Modal Hapus -->
+@foreach ($user as $data)
+<div class="modal fade" id="exampleModal-{{ $data->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Hapus User</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Yakin ingin menghapus User ini ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <a href="/admin/hapus-user/{{ $data->id }}" class="btn btn-danger">Hapus</a>
+        </div>
+      </div>
+    </div>
+</div>
+@endforeach
+
 <script type="text/javascript">
 $(document).ready( function () {
     $("#example1").DataTable({

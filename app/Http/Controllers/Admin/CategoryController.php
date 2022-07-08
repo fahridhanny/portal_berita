@@ -10,7 +10,7 @@ use App\Http\Controllers\Controller;
 class CategoryController extends Controller
 {
     Public function index(){
-        $category = Category::all();
+        $category = Category::orderby('id', 'DESC')->get();
         return view('pages.admin.category', compact('category'));
     }
 

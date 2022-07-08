@@ -9,7 +9,7 @@ use App\Tag;
 class TagController extends Controller
 {
     public function index(){
-        $tag = Tag::all();
+        $tag = Tag::orderby('id', 'DESC')->get();
         return view("pages.admin.tag", compact('tag'));
     }
 

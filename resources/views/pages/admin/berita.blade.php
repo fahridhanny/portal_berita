@@ -43,7 +43,8 @@
                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                             <a href="/admin/priview/berita/{{ $content->title }}" class="btn btn-warning" target="_blank"><i class="fa-solid fa-eye"></i></a>
                             <a href="/admin/edit-berita/{{ $content->title }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
-                            <a href="/admin/hapus-berita/{{ $content->title }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                            {{-- <a href="/admin/hapus-berita/{{ $content->title }}" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a> --}}
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal-{{ $content->id }}"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -55,6 +56,30 @@
     <!-- /.card-body -->
   </div>
   <!-- /.card -->
+
+<!-- Modal Hapus -->
+@foreach ($contents as $content)
+<div class="modal fade" id="exampleModal-{{ $content->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Hapus Berita</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Yakin ingin menghapus Berita ini ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <a href="/admin/hapus-berita/{{ $content->title }}" class="btn btn-danger">Hapus</a>
+        </div>
+      </div>
+    </div>
+</div>
+@endforeach
+
 <script type="text/javascript">
     $(document).ready( function () {
         $("#example1").DataTable({

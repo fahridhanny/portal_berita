@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
     public function index(){
-        $user = User::all();
+        $user = User::orderby('id', 'desc')->get();
         return view('pages.admin.user', compact('user'));
     }
     public function formUser(){

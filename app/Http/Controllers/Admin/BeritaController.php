@@ -491,6 +491,23 @@ class BeritaController extends Controller
         }else{
             $content['tag'] = '';    
         }
+
+        $content_related = ContentRelated::where('id_content', $content->id)->get();
+            if($content_related){
+                $related = Content::get();
+                $arrRelated = array();
+                foreach ($content_related as $data) {
+                    foreach ($related as $value) {
+                        if ($data->id_related == $value->id) {
+                            array_push($arrRelated, $value);
+                        }
+                    }
+                }
+                $content['related'] = $arrRelated;
+            }else{
+                $content['related'] = '';    
+            }
+
         return view('pages.admin.priview', compact('content'));
     }
 }

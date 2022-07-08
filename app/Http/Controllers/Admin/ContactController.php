@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 class ContactController extends Controller
 {
     public function contact(){
-        $contact = Contact::all();
+        $contact = Contact::orderby('id', 'desc')->get();
         //dd($contact);
         return view('pages.admin.contact', compact('contact'));
     }

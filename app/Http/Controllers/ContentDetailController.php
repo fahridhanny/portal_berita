@@ -73,7 +73,6 @@ class ContentDetailController extends Controller
             if($content_related){
                 $related = Content::get();
                 $arrRelated = array();
-                $arrRelatedImage = array();
                 foreach ($content_related as $data) {
                     foreach ($related as $value) {
                         if ($data->id_related == $value->id) {

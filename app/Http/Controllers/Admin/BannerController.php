@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\File;
 class BannerController extends Controller
 {
     public function index(){
-        $banner = Banner::all();
+        $banner = Banner::orderby('id', 'desc')->get();
         return view('pages.admin.banner', compact('banner'));
     }
     public function formBanner(){
