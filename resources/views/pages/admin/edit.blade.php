@@ -142,53 +142,82 @@
                     <p class="text-danger">{{ $message }}</p>
                 @enderror
             </div>
-            <div id="accordion">
-                <div class="card">
-                  <div class="card-header" id="headingOne" style="background-color: gray">
-                    <h5 class="mb-0">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="color: black">
-                            Related
-                        </a>
-                    </h5>
-                  </div>
-              
-                  <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                    <div class="card-body">
-                        <div class="list-related">
-                            @php
-                                $relatedNew = array();
-                                foreach ($content_related as $key => $value) {
-                                    array_push($relatedNew, $value->judul);
-                                }
-                                $related = implode(',',$relatedNew);
-                                // dd($related);
-                            @endphp
-                            <div class="form-group">
-                                <input type='text'
-                                    value='{{ $related }}'
-                                    placeholder='Write your Related Content'
-                                    class='flexdatalist2 form-control'
-                                    data-data='/admin/getBerita'
-                                    data-search-in='judul'
-                                    data-selection-required='true'
-                                    data-value-property='judul'
-                                    data-min-length='0'
-                                    id='relative'
-                                    multiple='multiple'
-                                    name='related'>
-                                @error('related')
-                                    <p class="text-danger">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
+            <div class="form-group" style="margin-right: 50%" id="formRelated">
+                <label for="exampleFormControlFile1">Related</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon2" id="relatedValue" readonly>
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalRelated"><i class="fa-solid fa-magnifying-glass"></i></button>
+                      {{-- <button class='btn btn-danger' type='button' id='hapusRelated'><i class='fa-solid fa-trash-can'></i></button> --}}
                     </div>
-                  </div>
                 </div>
+            </div>
+            <div class="form-group" style="margin-right: 30%;">
+                <table class="table table-striped" id="selectRelated">
+                    <thead>
+                      <tr>
+                        <th scope="col">Judul</th>
+                        <th scope="col">Hapus</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($content_related as $data)
+                        <tr>
+                            <input type='hidden' value="{{ $data->id }}" name='related[]'>
+                            <td>{{ $data->judul }}</td>
+                            <td>
+                                <button type='button' class='btn btn-danger' id="hapusRelated-{{ $data->id }}">
+                                <i class='fa-solid fa-trash-can'></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
             <button type="submit" class="btn btn-primary">Simpan</button>
         </form>
     </div>
   </div>
+
+  <!-- Modal Related -->
+<div class="modal fade" id="modalRelated" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Pilih Related</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <table id="tableRelated" class="table table-striped table-bordered">
+                <thead class="table-dark">
+                <tr>
+                    <th>No. </th>
+                    <th>Judul</th>
+                    <th>Pilih</th>
+                </tr>
+                </thead>
+                {{-- <tbody>
+                @php
+                    $no = 1;
+                @endphp
+                @foreach ($contents as $content)
+                    <tr>
+                        <th>{{ $no++ }}</th>
+                        <td>{{ $content->judul }}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary" id="related-{{ $content->id }}"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody> --}}
+            </table>
+        </div>
+      </div>
+    </div>
+</div>
 
     <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
     <script>
@@ -253,5 +282,82 @@
             searchIn: 'judul',
             data: '/admin/getBerita'
         });
+    </script>
+    <script>
+    $(document).ready(function(){
+        var id = {{ $content->id }};
+        
+        var table = $("#tableRelated").DataTable({
+            "responsive": true, 
+            "lengthChange": false, 
+            "autoWidth": false,
+            ajax: {
+                url: '/admin/getBeritaAll',
+                dataSrc: 'data'
+            },
+            columns: [
+                {data: 'judul_en'},
+                {data: 'judul'},
+                {data: null, 
+                 render: function(data, type, row){
+                    return "<button type='button'"+ 
+                    "class='btn btn-primary' id='related'>"+
+                    "<i class='fa-solid fa-magnifying-glass'>"+
+                    "</i></button>"}
+                }
+            ],
+            order: [
+                [2, 'desc'],
+            ]
+        });
+
+        table.on('order.dt search.dt', function () {
+            let i = 1;
+    
+            table.cells(null, 0, { search: 'applied', order: 'applied' }).every(function (cell) {
+                this.data(i++);
+            });
+        }).draw();
+        
+        $('#tableRelated tbody').on('click', 'button', function () {
+            var data = table.row($(this).parents('tr')).data();
+
+            $('#relatedValue').val(data["judul"]);
+            $('#selectRelated tbody').append("<tr>"+
+                                                "<td><input type='hidden' value='"+data["id"]+"' name='related[]'>"+data["judul"]+"</td>"+
+                                                "<td>"+
+                                                    "<button type='button' class='btn btn-danger' id='hapusRelated-"+data["id"]+"'>"+
+                                                    "<i class='fa-solid fa-trash-can'></i>"+
+                                                    "</button>"+
+                                                "</td>"+
+                                            "</tr>");
+            $('#modalRelated').modal('hide');
+        });
+
+
+        $.ajax({
+            url: '/admin/related/'+id ,
+            type: 'get',
+            success: function(data){
+                data.forEach(value => {
+                    $('#hapusRelated-'+value.id_related).on('click', function(){
+                        $(this).parents('tr').fadeOut(200);
+
+                        $.ajax({
+                            url: '/admin/hapus-related/'+id+'/'+value.id_related ,
+                            type: 'get'
+                        });
+                    });
+                });
+            },
+            error: function(data){
+                console.log(data);
+            }
+        });
+
+        $('#selectRelated tbody').on('click','.fa-trash-can',function(){
+            $(this).parents('tr').fadeOut(200);
+        });
+    });
     </script>
 @endsection

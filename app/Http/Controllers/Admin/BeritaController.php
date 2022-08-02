@@ -26,18 +26,26 @@ class BeritaController extends Controller
         return $tag;
     }
 
+    public function getBeritaAll(){
+        $content = Content::orderby('id', 'desc')->get();
+        return response()->json([
+            'data' => $content
+        ], 200);
+    }
+
     public function getBerita(){
-        $content = Content::get();
+        $content = Content::orderby('id', 'desc')->get();
         return $content;
     }
 
     public function tambahRelated(Request $request){
-        dd($request->all());
+        // dd($request->all());
     }
 
     public function formBerita(){
         $category = Category::all();
-        return view('pages.admin.tambah_berita', compact('category'));
+        $contents = Content::orderby('id', 'desc')->get();
+        return view('pages.admin.tambah_berita', compact('category', 'contents'));
     }
 
     public function tambahBerita(Request $request){
@@ -76,7 +84,7 @@ class BeritaController extends Controller
         ]);
         //dd($request);
         $tag = explode(',', $request->tag);
-        $related = explode(',', $request->related);
+        $related = $request->related;
 
         if (count($related) != 3) {
             return redirect()->back()->with(['error' => 'Related harus berjumlah 3']);
@@ -154,7 +162,6 @@ class BeritaController extends Controller
     }
 
     public function editBerita($title = '', Request $request){
-
         if($title){
             if ($request->imageValue) {
 
@@ -186,7 +193,7 @@ class BeritaController extends Controller
                     // 'tag.required' => 'tag tidak boleh kosong'
                 ]);
                 $tags = explode(',', $request->tag);
-                $content_related = explode(',', $request->related);
+                $content_related = $request->related;
 
                 if (count($content_related) != 3) {
                     return redirect()->back()->with(['error' => 'Related harus berjumlah 3']);
@@ -229,21 +236,10 @@ class BeritaController extends Controller
 
                     $related = ContentRelated::where('id_content', $content->id)->get();
                     if ($related) {
-                        $getContent = Content::get();
-                        $arrRelated = array();
-                        foreach ($getContent as $key => $data) {
-                            foreach ($content_related as $key => $value) {
-                                if ($data->judul == $value) {
-                                    array_push($arrRelated, $data->id);
-                                }
-                            }
-                        }
-
                         foreach ($related as $key => $value) {
                             $value->delete();
                         }
-
-                        foreach ($arrRelated as $key => $value) {
+                        foreach ($content_related as $key => $value) {
                             $newRelated = new ContentRelated();
                             $newRelated->id_content = $content->id;
                             $newRelated->id_related = $value;
@@ -509,5 +505,25 @@ class BeritaController extends Controller
             }
 
         return view('pages.admin.priview', compact('content'));
+    }
+
+    public function relatedById($id){
+        $contentRelated = ContentRelated::where('id_content', $id)->get();
+        return $contentRelated;
+    }
+
+    public function hapusRelated($id, $id_related){
+        $contentRelated = ContentRelated::where('id_content', $id)->where('id_related', $id_related)->first();
+        if($contentRelated){
+            $contentRelated->delete();
+
+            return response()->json([
+                'message' => 'Berhasil menghapus'
+            ], 200);
+        }else{
+            return response()->json([
+                'message' => 'Gagal menghapus'
+            ], 401);
+        }
     }
 }

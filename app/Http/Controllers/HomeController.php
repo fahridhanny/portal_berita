@@ -7,6 +7,7 @@ use App\Content;
 use App\Category;
 use App\Contact;
 use FarhanWazir\GoogleMaps\GMaps;
+use Illuminate\Support\Facades\Input;
 
 class HomeController extends Controller
 {
@@ -75,5 +76,24 @@ class HomeController extends Controller
         $map = $this->gmaps->create_map();
 
         return view('pages.maps', compact('map'));
+    }
+
+    public function search(Request $request){
+        $search = Input::get('q');
+        if ($search) {
+            if (app()->getLocale() == 'id') {
+                $contents = Content::where('judul', 'ILIKE', "%".$search."%")
+                        ->orWhere('content', 'ILIKE', "%".$search."%")
+                        ->get();
+            }else{
+                $contents = Content::where('judul_en', 'ILIKE', "%".$search."%")
+                        ->orWhere('content_en', 'ILIKE', "%".$search."%")
+                        ->get();
+            }
+        } else {
+            $contents = Content::all();
+        }
+        
+        return view('pages.search', compact('contents'));
     }
 }

@@ -54,6 +54,7 @@ Route::group(['prefix' => '{locale?}', 'middleware' => ['bypass', 'language']], 
     Route::get('/news/{title?}', 'ContentDetailController@beritaDetail');
     Route::get('/contact', 'HomeController@contact');
     Route::post('/contact', 'HomeController@sendMessage');
+    Route::get('/search', 'HomeController@search');
 
     Route::get('/maps', 'HomeController@maps');
 });
@@ -73,7 +74,10 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => ['aut
     Route::get('/priview/berita/{title?}', 'BeritaController@priview');
     Route::get('/getTags', 'BeritaController@getTags');
     Route::get('/getBerita', 'BeritaController@getBerita');
+    Route::get('/getBeritaAll', 'BeritaController@getBeritaAll');
     Route::post('/tambah-related', 'BeritaController@tambahRelated');
+    Route::get('/related/{id}', 'BeritaController@relatedById');
+    Route::get('/hapus-related/{id}/{id_related}', 'BeritaController@hapusRelated');
 
     Route::get('/kategori', 'CategoryController@index');
     Route::get('/tambah-kategori', 'CategoryController@formKategori');

@@ -18,8 +18,10 @@
             </div> --}}
             <div class="col-lg-3 col-md-4 ml-auto">
                 <div class="b-search">
-                    <input type="text" placeholder="Search">
-                    <button><i class="fa fa-search"></i></button>
+                    <form action="/{{ app()->getLocale() }}/search" method="get">
+                        <input type="text" placeholder="Search" name="q">
+                        <button type="submit"><i class="fa fa-search"></i></button>
+                    </form>
                 </div>
             </div>
         </div>
